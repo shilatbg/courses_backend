@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CleanCore5\Clean.Core.csproj" />
     <ProjectReference Include="..\Clean.Data\Clean.Data.csproj" />
+    <ProjectReference Include="..\Clean.Core\Clean.Core.csproj" />
   </ItemGroup>
 
 </Project>
