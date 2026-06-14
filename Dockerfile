@@ -6,7 +6,7 @@ COPY *.sln ./
 COPY CleanAPI/*.csproj ./CleanAPI/
 COPY Clean.Core/*.csproj ./Clean.Core/
 COPY Clean.Data/*.csproj ./Clean.Data/
-COPY Clean.Service/*.csproj ./Clean.Service/
+COPY CleanService/*.csproj ./CleanService/
 
 RUN dotnet restore
 
