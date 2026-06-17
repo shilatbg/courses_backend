@@ -1,9 +1,6 @@
-﻿using Clean.API.DTOs;
+﻿using Clean.Service;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 
 namespace Clean.API.Controllers
 {
@@ -11,62 +8,30 @@ namespace Clean.API.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly IConfiguration _configuration;
+        private readonly JwtService _jwtService;
 
-        public AuthController(IConfiguration configuration)
+        public AuthController(JwtService jwtService)
         {
-            _configuration = configuration;
+            _jwtService = jwtService;
         }
 
         [HttpPost("login")]
-        public IActionResult Login([FromBody] LoginRequest login)
+        public IActionResult Login([FromBody] LoginModel login)
         {
-            if (login.Email == "shilatbg101@gmail.com" && login.Password == "1234")
+            // כאן תבצע אימות משתמש (למשל מול בסיס נתונים)
+            if (login.Username == "test" && login.Password == "password") // דוגמה לאימות
             {
-                var token = GenerateJwtToken(login.Email);
-
-                return Ok(new
-                {
-                    success = true,
-                    message = "Login successful",
-                    role = "admin",
-                    token = token
-                });
+                var token = _jwtService.GenerateToken(login.Username);
+                return Ok(token);
             }
 
-            return Unauthorized(new
-            {
-                success = false,
-                message = "Invalid email or password"
-            });
+            return Unauthorized();
         }
+    }
 
-        private string GenerateJwtToken(string email)
-        {
-            var claims = new[]
-            {
-                new Claim(ClaimTypes.Email, email),
-                new Claim(ClaimTypes.Role, "admin")
-            };
-
-            var key = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(_configuration["Jwt:Key"])
-            );
-
-            var credentials = new SigningCredentials(
-                key,
-                SecurityAlgorithms.HmacSha256
-            );
-
-            var token = new JwtSecurityToken(
-                issuer: _configuration["Jwt:Issuer"],
-                audience: _configuration["Jwt:Audience"],
-                claims: claims,
-                expires: DateTime.Now.AddHours(2),
-                signingCredentials: credentials
-            );
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
+    public class LoginModel
+    {
+        public string Username { get; set; }
+        public string Password { get; set; }
     }
 }
