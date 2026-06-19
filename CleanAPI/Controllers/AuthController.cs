@@ -18,8 +18,7 @@ namespace Clean.API.Controllers
         [HttpPost("login")]
         public IActionResult Login([FromBody] LoginModel login)
         {
-            // כאן תבצע אימות משתמש (למשל מול בסיס נתונים)
-            if (login.Username == "test" && login.Password == "password") // דוגמה לאימות
+            if (login.Username == "test" && login.Password == "password") 
             {
                 var token = _jwtService.GenerateToken(login.Username);
                 return Ok(token);

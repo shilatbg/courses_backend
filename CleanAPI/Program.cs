@@ -10,6 +10,16 @@ using Clean.Service;
 using Clean.API.Middlewares;
 using Microsoft.EntityFrameworkCore;
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAngular",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:4200")
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+});
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddAuthentication(options =>
@@ -74,6 +84,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors("AllowAngular");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
