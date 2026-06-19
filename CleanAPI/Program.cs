@@ -10,6 +10,9 @@ using Clean.Service;
 using Clean.API.Middlewares;
 using Microsoft.EntityFrameworkCore;
 
+var builder = WebApplication.CreateBuilder(args);
+
+// CORS חייב להיות אחרי יצירת builder
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngular",
@@ -21,7 +24,6 @@ builder.Services.AddCors(options =>
         });
 });
 
-var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -40,11 +42,10 @@ builder.Services.AddAuthentication(options =>
         ValidAudience = builder.Configuration["Jwt:Audience"],
 
         IssuerSigningKey = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])
+            Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)
         )
     };
 });
-
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
@@ -67,15 +68,13 @@ builder.Services.AddScoped<ICoursesService, CoursesService>();
 builder.Services.AddScoped<IStudentsRepositories, StudentsRepositories>();
 builder.Services.AddScoped<IStudentsService, StudentsService>();
 
-builder.Services.AddControllers();
-
 builder.Services.AddDbContext<DataContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 var app = builder.Build();
+
 app.UseMiddleware<ErrorHandlingMiddleware>();
 app.UseMiddleware<RequestLoggingMiddleware>();
-
 
 if (app.Environment.IsDevelopment())
 {
@@ -84,8 +83,12 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
 app.UseCors("AllowAngular");
+
 app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllers();
+
 app.Run();
