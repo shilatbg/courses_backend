@@ -12,7 +12,6 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// CORS חייב להיות אחרי יצירת builder
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngular",
@@ -55,6 +54,7 @@ builder.Services.AddControllers()
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddScoped<JwtService>();
 
 builder.Services.AddScoped<ICategoriesRepositories, CategoriesRepositories>();
 builder.Services.AddScoped<ICategoriesService, CategoriesService>();
