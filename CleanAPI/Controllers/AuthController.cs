@@ -18,9 +18,9 @@ namespace Clean.API.Controllers
         [HttpPost("login")]
         public IActionResult Login([FromBody] LoginModel login)
         {
-            if (login.Username == "test" && login.Password == "password") 
+            if (login.Email == "test" && login.Password == "password") 
             {
-                var token = _jwtService.GenerateToken(login.Username);
+                var token = _jwtService.GenerateToken(login.Email);
                 return Ok(token);
             }
 
@@ -30,7 +30,7 @@ namespace Clean.API.Controllers
 
     public class LoginModel
     {
-        public string Username { get; set; }
+        public string Email { get; set; }
         public string Password { get; set; }
     }
 }
